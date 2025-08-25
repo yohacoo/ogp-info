@@ -1,20 +1,22 @@
 {
-    "name": "yohacoo/ogp-info",
-    "description": "Library for retrieving OGP information",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Yohacoo\\OgpInfo\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "masa",
-            "email": "masa@yohacoo.com"
-        }
-    ],
-    "require-dev": {
-        "phpunit/phpunit": "^12"
+  "name": "yohacoo/ogp-info",
+  "description": "Library for retrieving OGP information",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Yohacoo\\OgpInfo\\": "src/"
     }
+  },
+  "scripts": {
+    "httpd": [
+      "php -S localhost:8000 -t test-document-root/"
+    ],
+    "test": [
+      "./vendor/bin/phpunit --colors tests"
+    ]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12"
+  }
 }
