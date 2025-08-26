@@ -9,7 +9,8 @@
     }
   },
   "scripts": {
-    "httpd": [
+    "server": [
+      "Composer\\Config::disableProcessTimeout",
       "php -S localhost:8000 -t ./test-document-root/"
     ],
     "test": [

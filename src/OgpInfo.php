@@ -11,6 +11,9 @@ final class OgpInfo
   /** @var string Path for the cache directory */
   private static $cacheDir = __DIR__ . '/.ogp-cache';
 
+  /** @var int Cache TTL in seconds */
+  private static $cacheTtl = 60 * 60 * 24;
+
   /**
    * Set cache directory.
    * @param string $dir Path for the cache directory
@@ -18,6 +21,15 @@ final class OgpInfo
   public static function setCacheDir(string $dir): void
   {
     self::$cacheDir = $dir;
+  }
+
+  /**
+   * Set cache TTL.
+   * @param int $ttl Cache TTL in seconds
+   */
+  public static function setCacheTtl(int $ttl): void
+  {
+    self::$cacheTtl = $ttl;
   }
 
   /** @var string URL to retrieve OGP information */
@@ -57,6 +69,15 @@ final class OgpInfo
   public function getHttpStatus(): int
   {
     return $this->httpStatus;
+  }
+
+  /**
+   * Get timestamp.
+   * @return int Timestamp when data is retrieved via HTTP
+   */
+  public function getTimestamp(): int
+  {
+    return $this->timestamp;
   }
 
   /**
@@ -141,6 +162,11 @@ final class OgpInfo
     $info->httpStatus = $data['httpStatus'];
     $info->timestamp = $data['timestamp'];
     $info->values = $data['values'];
+
+    if (time() > $info->timestamp + self::$cacheTtl) {
+      unlink($path);
+      return null;
+    }
 
     return $info;
   }

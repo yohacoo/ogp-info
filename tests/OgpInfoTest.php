@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Yohacoo\OgpInfo\Tests;
-
 use PHPUnit\Framework\TestCase;
 use Yohacoo\OgpInfo\OgpInfo;
 
@@ -29,6 +27,33 @@ final class OgpInfoTest extends TestCase
     $this->assertSame('1234567890123456', $info->get('fb:app_id'));
     $this->assertSame('summary_large_image', $info->get('twitter:card'));
     $this->assertSame('http://localhost:8000/ogp-twitter.png', $info->get('twitter:image'));
+  }
+
+  public function testCache(): void
+  {
+    $url = 'http://localhost:8000/test.html';
+
+    $getCachePath = new ReflectionMethod(OgpInfo::class, 'getCachePath');
+    $getCachePath->setAccessible(true);
+    $path = $getCachePath->invoke(null, $url);
+
+    if (file_exists($path)) {
+      unlink($path);
+    }
+    $this->assertFileDoesNotExist($path);
+
+    $info = OgpInfo::retrieve($url);
+    $this->assertFileExists($path);
+
+    sleep(1);
+    $cachedInfo = OgpInfo::retrieve($url);
+    $this->assertSame($info->getTimestamp(), $cachedInfo->getTimestamp());
+
+    OgpInfo::setCacheTtl(0);
+    $newInfo = OgpInfo::retrieve($url);
+    $this->assertGreaterThan($info->getTimestamp(), $newInfo->getTimestamp());
+
+    OgpInfo::setCacheTtl(60 * 60 * 24);
   }
 
   public function testExternal(): void
