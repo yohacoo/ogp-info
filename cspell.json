@@ -4,11 +4,7 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [
-        "CURLOPT",
-        "FOLLOWLOCATION",
-        "MAXREDIRS",
         "metas",
-        "RETURNTRANSFER"
     ],
     "ignoreWords": [],
     "import": []
