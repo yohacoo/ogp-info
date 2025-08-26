@@ -6,8 +6,6 @@ namespace Yohacoo\OgpInfo;
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . "/../vendor/autoload.php";
-
 final class OgpInfoTest extends TestCase
 {
   public function testUrl(): void
