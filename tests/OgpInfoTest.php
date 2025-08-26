@@ -29,4 +29,26 @@ final class OgpInfoTest extends TestCase
     $this->assertSame('summary_large_image', $info->get('twitter:card'));
     $this->assertSame('http://localhost:8000/ogp-twitter.png', $info->get('twitter:image'));
   }
+
+  public function testExternal(): void
+  {
+    $file = './tests/external.json';
+    if (!file_exists($file)) return;
+
+    echo $file;
+    $json = file_get_contents($file);
+    $data = json_decode($json, true);
+
+    $sites = $data['sites'];
+
+    foreach ($sites as $site) {
+      $url = $site['url'];
+      $values = $site['values'];
+
+      $info = OgpInfo::retrieve($url);
+      foreach ($values as $key => $value) {
+        $this->assertStringStartsWith($value, $info->get($key), "URL: {$url}\nKey: {$key}");
+      }
+    }
+  }
 }
