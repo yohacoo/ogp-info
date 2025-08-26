@@ -13,7 +13,7 @@ final class OgpInfo
 
   /**
    * Set cache directory.
-   * @param string $dir path for the cache directory
+   * @param string $dir Path for the cache directory
    */
   public static function setCacheDir(string $dir): void
   {
@@ -61,8 +61,8 @@ final class OgpInfo
 
   /**
    * Check if this info has key and value exists.
-   * @param string $key key
-   * @return bool true if value exists
+   * @param string $key Key
+   * @return bool Return true if value exists
    */
   private function has(string $key): bool
   {
@@ -71,8 +71,8 @@ final class OgpInfo
 
   /**
    * Get value.
-   * @param string $key key
-   * @return string value
+   * @param string $key Key
+   * @return string Value
    */
   public function get(string $key): string
   {
@@ -81,8 +81,8 @@ final class OgpInfo
 
   /**
    * Set value.
-   * @param string $key key
-   * @param string $value value
+   * @param string $key Key
+   * @param string $value Value
    */
   private function set(string $key, string $value): void
   {
@@ -91,7 +91,7 @@ final class OgpInfo
 
   /**
    * Get cache file path.
-   * @return string path for the cache file
+   * @return string Path for the cache file
    */
   private static function getCachePath($url): string
   {
