@@ -114,11 +114,11 @@ final class OgpInfo
     @$doc->loadHTML($html);
 
     // Check meta tags
-    $meta_elements = $doc->getElementsByTagName('meta');
-    foreach ($meta_elements as $meta_element) {
-      $property = $meta_element->getAttribute('property');
-      $name = $meta_element->getAttribute('name');
-      $content = $meta_element->getAttribute('content');
+    $metas = $doc->getElementsByTagName('meta');
+    foreach ($metas as $meta) {
+      $property = $meta->getAttribute('property');
+      $name = $meta->getAttribute('name');
+      $content = $meta->getAttribute('content');
 
       if (str_starts_with($property, 'og:') && !$info->has($property)) {
         $info->set($property, $content);
@@ -138,10 +138,10 @@ final class OgpInfo
     }
 
     // Check title tags
-    $title_elements = $doc->getElementsByTagName('title');
-    if ($title_elements->length > 0) {
-      $title_element = $title_elements->item(0);
-      $info->set('title', $title_element->firstChild->textContent);
+    $titles = $doc->getElementsByTagName('title');
+    if ($titles->length > 0) {
+      $title = $titles->item(0);
+      $info->set('title', $title->firstChild->textContent);
     }
 
     return $info;
