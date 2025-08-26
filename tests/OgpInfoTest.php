@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yohacoo\OgpInfo;
+namespace Yohacoo\OgpInfo\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Yohacoo\OgpInfo\OgpInfo;
 
 final class OgpInfoTest extends TestCase
 {
@@ -35,7 +36,6 @@ final class OgpInfoTest extends TestCase
     $file = './tests/external.json';
     if (!file_exists($file)) return;
 
-    echo $file;
     $json = file_get_contents($file);
     $data = json_decode($json, true);
 

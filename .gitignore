@@ -10,4 +10,5 @@ composer.phar
 
 ### Custom Settings
 
+.ogp-cache/
 tests/external.json

@@ -10,10 +10,13 @@
   },
   "scripts": {
     "httpd": [
-      "php -S localhost:8000 -t test-document-root/"
+      "php -S localhost:8000 -t ./test-document-root/"
     ],
     "test": [
       "./vendor/bin/phpunit --colors tests"
+    ],
+    "clean": [
+      "rm -rf ./src/.ogp-cache"
     ]
   },
   "require-dev": {

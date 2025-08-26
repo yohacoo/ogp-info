@@ -8,13 +8,28 @@ use DOMDocument;
 
 final class OgpInfo
 {
+  /** @var string Path for the cache directory */
+  private static $cacheDir = __DIR__ . '/.ogp-cache';
+
+  /**
+   * Set cache directory.
+   * @param string $dir path for the cache directory
+   */
+  public static function setCacheDir(string $dir): void
+  {
+    self::$cacheDir = $dir;
+  }
+
   /** @var string URL to retrieve OGP information */
   private $url;
 
   /** @var int HTTP status code */
   private $httpStatus;
 
-  /** @var array<string, string> retrieved values */
+  /** @var int Timestamp when data is retrieved via HTTP  */
+  private $timestamp;
+
+  /** @var array<string, string> Retrieved values */
   private $values = array();
 
   /**
@@ -75,13 +90,59 @@ final class OgpInfo
   }
 
   /**
-   * Magic method to get value.
-   * @param string $key key
-   * @return string value
+   * Get cache file path.
+   * @return string path for the cache file
    */
-  public function __get(string $key): string
+  private static function getCachePath($url): string
   {
-    return $this->get($key);
+    $host = parse_url($url, PHP_URL_HOST);
+    $md5 = md5(urlencode($url));
+    $filename = "{$host}-{$md5}.json";
+    return self::$cacheDir . '/' . $filename;
+  }
+
+  /**
+   * Save to cache.
+   * Create the cache directory if it does not exist.
+   */
+  private function saveToCache(): void
+  {
+    if (!file_exists(self::$cacheDir)) {
+      mkdir(self::$cacheDir, 0777, true);
+    }
+
+    $cache_data = array(
+      'url' => $this->url,
+      'httpStatus' => $this->httpStatus,
+      'timestamp' => $this->timestamp,
+      'values' => $this->values,
+    );
+
+    $path = self::getCachePath($this->url);
+    $json = json_encode($cache_data);
+    file_put_contents($path, $json);
+  }
+
+  /**
+   * Read the cache file and create an instance if it exists.
+   * @param string $url URL for find the cache file
+   * @return OgpInfo | null OgpInfo object or null if cache file does not exist
+   */
+  private static function fromCache(string $url): OgpInfo | null
+  {
+    $path = self::getCachePath($url);
+    if (!file_exists($path)) return null;
+
+    $json = file_get_contents($path);
+    $data = json_decode($json, true);
+
+    $info = new self($url);
+
+    $info->httpStatus = $data['httpStatus'];
+    $info->timestamp = $data['timestamp'];
+    $info->values = $data['values'];
+
+    return $info;
   }
 
   /**
@@ -91,6 +152,10 @@ final class OgpInfo
    */
   public static function retrieve(string $url): OgpInfo
   {
+    // Check the cache
+    $info = self::fromCache($url);
+    if ($info) return $info;
+
     $info = new self($url);
 
     // Get contents via HTTP
@@ -104,6 +169,7 @@ final class OgpInfo
 
     // Check HTTP status
     $info->httpStatus = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $info->timestamp = time();
     if ($info->httpStatus !== 200) return $info;
 
     // Prevent garbled characters
@@ -143,6 +209,9 @@ final class OgpInfo
       $title = $titles->item(0);
       $info->set('title', $title->firstChild->textContent);
     }
+
+    // Save to cache
+    $info->saveToCache();
 
     return $info;
   }
