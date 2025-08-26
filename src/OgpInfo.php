@@ -8,19 +8,13 @@ use DOMDocument;
 
 final class OgpInfo
 {
-  /**
-   * URL to retrieve OGP information
-   */
+  /** @var string URL to retrieve OGP information */
   private $url;
 
-  /**
-   * HTTP status code
-   */
+  /** @var int HTTP status code */
   private $httpStatus;
 
-  /**
-   * Retrieved values
-   */
+  /** @var array<string, string> retrieved values */
   private $values = array();
 
   /**
