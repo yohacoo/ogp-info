@@ -7,6 +7,13 @@ use Yohacoo\OgpInfo\OgpInfo;
 
 final class OgpInfoTest extends TestCase
 {
+  private static function getCacheFile($url): string
+  {
+    $getCacheFile = new ReflectionMethod(OgpInfo::class, 'getCacheFile');
+    $getCacheFile->setAccessible(true);
+    return $getCacheFile->invoke(null, $url);
+  }
+
   public function testUrl(): void
   {
     $url = 'http://localhost:8000/test.html';
@@ -32,18 +39,15 @@ final class OgpInfoTest extends TestCase
   public function testCache(): void
   {
     $url = 'http://localhost:8000/test.html';
+    $file = self::getCacheFile($url);
 
-    $getCachePath = new ReflectionMethod(OgpInfo::class, 'getCachePath');
-    $getCachePath->setAccessible(true);
-    $path = $getCachePath->invoke(null, $url);
-
-    if (file_exists($path)) {
-      unlink($path);
+    if (file_exists($file)) {
+      unlink($file);
     }
-    $this->assertFileDoesNotExist($path);
+    $this->assertFileDoesNotExist($file);
 
     $info = OgpInfo::retrieve($url);
-    $this->assertFileExists($path);
+    $this->assertFileExists($file);
 
     sleep(1);
     $cachedInfo = OgpInfo::retrieve($url);
@@ -54,6 +58,27 @@ final class OgpInfoTest extends TestCase
     $this->assertGreaterThan($info->getTimestamp(), $newInfo->getTimestamp());
 
     OgpInfo::setCacheTtl(60 * 60 * 24);
+  }
+
+  public function testClearCache(): void
+  {
+    $url = 'http://localhost:8000/test.html';
+    $file = self::getCacheFile($url);
+
+    $info = OgpInfo::retrieve($url);
+    $this->assertFileExists($file);
+
+    $timestamp = new ReflectionProperty(OgpInfo::class, 'timestamp');
+    $timestamp->setAccessible(true);
+    $timestamp->setValue($info, time() - 60 * 60 * 24 * 2);
+
+    $saveToCache = new ReflectionMethod(OgpInfo::class, 'saveToCache');
+    $saveToCache->setAccessible(true);
+    $saveToCache->invoke($info);
+    $this->assertFileExists($file);
+
+    OgpInfo::clearCache();
+    $this->assertFileDoesNotExist($file);
   }
 
   public function testExternal(): void

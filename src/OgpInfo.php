@@ -81,6 +81,17 @@ final class OgpInfo
   }
 
   /**
+   * Check whether it has passed the TTL.
+   * @return bool Return true if it has expired
+   */
+  public function isExpired(): bool
+  {
+    if (!isset($this->timestamp)) return false;
+
+    return time() > $this->timestamp + self::$cacheTtl;
+  }
+
+  /**
    * Check if this info has key and value exists.
    * @param string $key Key
    * @return bool Return true if value exists
@@ -114,7 +125,7 @@ final class OgpInfo
    * Get cache file path.
    * @return string Path for the cache file
    */
-  private static function getCachePath($url): string
+  private static function getCacheFile($url): string
   {
     $host = parse_url($url, PHP_URL_HOST);
     $md5 = md5(urlencode($url));
@@ -132,43 +143,49 @@ final class OgpInfo
       mkdir(self::$cacheDir, 0777, true);
     }
 
-    $cache_data = array(
+    $data = array(
       'url' => $this->url,
       'httpStatus' => $this->httpStatus,
       'timestamp' => $this->timestamp,
       'values' => $this->values,
     );
 
-    $path = self::getCachePath($this->url);
-    $json = json_encode($cache_data);
-    file_put_contents($path, $json);
+    $file = self::getCacheFile($this->url);
+    $json = json_encode($data);
+    file_put_contents($file, $json);
   }
 
   /**
-   * Read the cache file and create an instance if it exists.
-   * @param string $url URL for find the cache file
-   * @return OgpInfo | null OgpInfo object or null if cache file does not exist
+   * Read the cache file and create an instance.
+   * @param string $file Path for the cache file
+   * @return OgpInfo OgpInfo object
    */
-  private static function fromCache(string $url): OgpInfo | null
+  private static function fromCache(string $file): OgpInfo
   {
-    $path = self::getCachePath($url);
-    if (!file_exists($path)) return null;
-
-    $json = file_get_contents($path);
+    $json = file_get_contents($file);
     $data = json_decode($json, true);
 
-    $info = new self($url);
+    $info = new self($data['url']);
 
     $info->httpStatus = $data['httpStatus'];
     $info->timestamp = $data['timestamp'];
     $info->values = $data['values'];
 
-    if (time() > $info->timestamp + self::$cacheTtl) {
-      unlink($path);
-      return null;
-    }
-
     return $info;
+  }
+
+  /**
+   * Delete old cache files.
+   */
+  public static function clearCache(): void
+  {
+    $files = glob(self::$cacheDir . '/*.json');
+    foreach ($files as $file) {
+      $info = self::fromCache($file);
+      if ($info->isExpired()) {
+        unlink($file);
+      }
+    }
   }
 
   /**
@@ -179,8 +196,15 @@ final class OgpInfo
   public static function retrieve(string $url): OgpInfo
   {
     // Check the cache
-    $info = self::fromCache($url);
-    if ($info) return $info;
+    $file = self::getCacheFile($url);
+    if (file_exists($file)) {
+      $info = self::fromCache($file);
+      if ($info->isExpired()) {
+        unlink($file);
+      } else {
+        return $info;
+      }
+    }
 
     $info = new self($url);
 

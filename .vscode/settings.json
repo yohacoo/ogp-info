@@ -4,5 +4,8 @@
   },
   "[php]": {
     "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

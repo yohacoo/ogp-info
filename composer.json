@@ -14,7 +14,7 @@
       "php -S localhost:8000 -t ./test-document-root/"
     ],
     "test": [
-      "./vendor/bin/phpunit --colors tests"
+      "./vendor/bin/phpunit tests"
     ],
     "clean": [
       "rm -rf ./src/.ogp-cache"
