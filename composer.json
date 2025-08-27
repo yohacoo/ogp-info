@@ -17,7 +17,7 @@
       "./vendor/bin/phpunit tests"
     ],
     "clean": [
-      "rm -rf ./src/.ogp-cache"
+      "rm -rf ./tests/.ogp-cache"
     ]
   },
   "require-dev": {

@@ -7,6 +7,11 @@ use Yohacoo\OgpInfo\OgpInfo;
 
 final class OgpInfoTest extends TestCase
 {
+  protected function setUp(): void
+  {
+    OgpInfo::setCacheDir(__DIR__ . '/.ogp-cache');
+  }
+
   private static function getCacheFile($url): string
   {
     $getCacheFile = new ReflectionMethod(OgpInfo::class, 'getCacheFile');
