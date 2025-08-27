@@ -15,7 +15,7 @@ final class OgpInfo
   private static $cacheTtl = 60 * 60 * 24;
 
   /**
-   * Set cache directory.
+   * Set the cache directory.
    * @param string $dir Path for the cache directory
    */
   public static function setCacheDir(string $dir): void
@@ -24,7 +24,7 @@ final class OgpInfo
   }
 
   /**
-   * Set cache TTL.
+   * Set the cache TTL.
    * @param int $ttl Cache TTL in seconds
    */
   public static function setCacheTtl(int $ttl): void
@@ -73,6 +73,7 @@ final class OgpInfo
 
   /**
    * Get timestamp.
+   * Returns the number of seconds since the epoch.
    * @return int Timestamp when data is retrieved via HTTP
    */
   public function getTimestamp(): int
