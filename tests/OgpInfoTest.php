@@ -96,6 +96,8 @@ final class OgpInfoTest extends TestCase
       $values = $site['values'];
 
       $info = OgpInfo::retrieve($url);
+      $this->assertSame(200, $info->getHttpStatus());
+
       foreach ($values as $key => $value) {
         $this->assertStringStartsWith($value, $info->get($key), "URL: {$url}\nKey: {$key}");
       }
