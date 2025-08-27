@@ -22,8 +22,6 @@ final class OgpInfoTest extends TestCase
 
     $this->assertSame($url, $info->getUrl());
     $this->assertSame(200, $info->getHttpStatus());
-    $this->assertSame('Test Title', $info->get('title'));
-    $this->assertSame('Test Description', $info->get('description'));
     $this->assertSame('en', $info->get('og:locale'));
     $this->assertSame('http://localhost:8000/', $info->get('og:url'));
     $this->assertSame('website', $info->get('og:type'));
@@ -34,6 +32,8 @@ final class OgpInfoTest extends TestCase
     $this->assertSame('1234567890123456', $info->get('fb:app_id'));
     $this->assertSame('summary_large_image', $info->get('twitter:card'));
     $this->assertSame('http://localhost:8000/ogp-twitter.png', $info->get('twitter:image'));
+    $this->assertSame('Test Title', $info->get('title'));
+    $this->assertSame('Test Description', $info->get('description'));
   }
 
   public function testCache(): void

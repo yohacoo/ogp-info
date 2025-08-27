@@ -92,16 +92,6 @@ final class OgpInfo
   }
 
   /**
-   * Check if this info has key and value exists.
-   * @param string $key Key
-   * @return bool Return true if value exists
-   */
-  private function has(string $key): bool
-  {
-    return array_key_exists($key, $this->values);
-  }
-
-  /**
    * Get value.
    * @param string $key Key
    * @return string Value
@@ -112,12 +102,14 @@ final class OgpInfo
   }
 
   /**
-   * Set value.
+   * Set value only if key and value do not exist.
    * @param string $key Key
    * @param string $value Value
    */
   private function set(string $key, string $value): void
   {
+    if (array_key_exists($key, $this->values)) return;
+
     $this->values[$key] = $value;
   }
 
@@ -243,19 +235,19 @@ final class OgpInfo
       $name = $meta->getAttribute('name');
       $content = $meta->getAttribute('content');
 
-      if (str_starts_with($property, 'og:') && !$info->has($property)) {
+      if (str_starts_with($property, 'og:')) {
         $info->set($property, $content);
       }
 
-      if (str_starts_with($property, 'fb:') && !$info->has($property)) {
+      if (str_starts_with($property, 'fb:')) {
         $info->set($property, $content);
       }
 
-      if (str_starts_with($name, 'twitter:') && !$info->has($name)) {
+      if (str_starts_with($name, 'twitter:')) {
         $info->set($name, $content);
       }
 
-      if ($name === 'description' && !$info->has($name)) {
+      if ($name === 'description') {
         $info->set($name, $content);
       }
     }
@@ -265,6 +257,21 @@ final class OgpInfo
     if ($titles->length > 0) {
       $title = $titles->item(0);
       $info->set('title', $title->firstChild->textContent);
+    }
+
+    // Check link tags
+    $links = $doc->getElementsByTagName('link');
+    foreach ($links as $link) {
+      $rel = $link->getAttribute('rel');
+      $href = $link->getAttribute('href');
+      if ($rel === 'icon' || $rel === 'apple-touch-icon') {
+        if (str_starts_with($href, '/')) {
+          $length = strpos($info->url, '/', strlen('https://'));
+          $href = substr($info->url, 0, $length) . $href;
+        }
+
+        $info->set($rel, $href);
+      }
     }
 
     // Save to cache
