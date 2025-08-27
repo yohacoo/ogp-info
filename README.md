@@ -1,4 +1,4 @@
-# ogp-info.php
+# ogp-info
 
 Library for retrieving OGP information via HTTP/HTTPS.
 
