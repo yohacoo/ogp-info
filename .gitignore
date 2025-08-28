@@ -13,4 +13,3 @@ composer.phar
 
 .phpunit.result.cache
 .ogp-cache/
-tests/external.json

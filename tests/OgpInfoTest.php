@@ -95,27 +95,4 @@ final class OgpInfoTest extends TestCase
     OgpInfo::clearCache();
     $this->assertFileDoesNotExist($file);
   }
-
-  public function testExternal(): void
-  {
-    $file = './tests/external.json';
-    if (!file_exists($file)) return;
-
-    $json = file_get_contents($file);
-    $data = json_decode($json, true);
-
-    $sites = $data['sites'];
-
-    foreach ($sites as $site) {
-      $url = $site['url'];
-      $values = $site['values'];
-
-      $info = OgpInfo::retrieve($url);
-      $this->assertSame(200, $info->getHttpStatus());
-
-      foreach ($values as $key => $value) {
-        $this->assertStringStartsWith($value, $info->get($key), "URL: {$url}\nKey: {$key}");
-      }
-    }
-  }
 }
