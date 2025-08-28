@@ -1,8 +1,18 @@
 {
   "name": "yohacoo/ogp-info",
   "description": "Library for retrieving OGP information",
+  "keywords": [
+    "ogp",
+    "opengraph"
+  ],
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "masa",
+      "email": "masa@yohacoo.com"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Yohacoo\\OgpInfo\\": "src/"
