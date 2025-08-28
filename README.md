@@ -20,8 +20,8 @@ use Yohacoo\OgpInfo\OgpInfo;
 OgpInfo::setCacheDir('/path/to/.ogp-cache');
 $info = OgpInfo::retrieve('https://example.com/');
 
-$title = $info->get('og:title');
-$description = $info->get('og:description');
+$title = $info->get('og:title') ?: $info->get('title');
+$description = $info->get('og:description') ?: $info->get('description');
 ```
 
 We strongly recommend setting a cache directory.
