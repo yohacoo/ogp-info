@@ -20,8 +20,8 @@ use Yohacoo\OgpInfo\OgpInfo;
 OgpInfo::setCacheDir('/path/to/.ogp-cache');
 $info = OgpInfo::retrieve('https://example.com/');
 
-$title = $info->get('og:title') ?: $info->get('title');
-$description = $info->get('og:description') ?: $info->get('description');
+$title = $info->get('og:title', 'title');
+$description = $info->get('og:description', 'description');
 ```
 
 We strongly recommend setting a cache directory.
@@ -29,9 +29,10 @@ The default cache directory is .ogp-cache under the directory containing OgpInfo
 
 ## API
 
-### OgpInfo->get($key)
+### OgpInfo->get(...$keys)
 
-Get a retrieved value.
+Get the first non-empty value for keys.
+If no value exists for the keys, return an empty string ('').
 
 | Key | Description |
 | --- | --- |
@@ -42,8 +43,6 @@ Get a retrieved value.
 | description | description value in \<meta name="description" content="..."\> |
 | icon | href value in \<link rel="icon" href="..."\><br>Return the absolute URL if the href starts with '/'. |
 | apple-touch-icon | href value in \<link rel="apple-touch-icon" href="..."\><br>Return the absolute URL if the href starts with '/'. |
-
-If no value exists for the key, return an empty string ('').
 
 ### OgpInfo->getUrl()
 

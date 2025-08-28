@@ -93,13 +93,17 @@ final class OgpInfo
   }
 
   /**
-   * Get value.
-   * @param string $key Key
-   * @return string Value
+   * Get the first non-empty value for keys.
+   * @param string $keys Keys
+   * @return string The first non-empty value found, or empty string ('') if no value exists for the keys
    */
-  public function get(string $key): string
+  public function get(string ...$keys): string
   {
-    return isset($this->values[$key]) ? $this->values[$key] : '';
+    foreach ($keys as $key) {
+      if (isset($this->values[$key])) return $this->values[$key];
+    }
+
+    return '';
   }
 
   /**

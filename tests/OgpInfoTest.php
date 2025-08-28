@@ -41,6 +41,16 @@ final class OgpInfoTest extends TestCase
     $this->assertSame('Test Description', $info->get('description'));
   }
 
+  public function testMultiKeys(): void
+  {
+    $url = 'http://localhost:8000/no-ogp.html';
+
+    $info = OgpInfo::retrieve($url);
+
+    $this->assertSame('Test Title', $info->get('og:title', 'title'));
+    $this->assertSame('Test Description', $info->get('og:description', 'description'));
+  }
+
   public function testCache(): void
   {
     $url = 'http://localhost:8000/test.html';
